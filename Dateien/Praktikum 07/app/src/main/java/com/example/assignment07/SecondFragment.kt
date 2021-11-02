@@ -2,12 +2,19 @@ package com.example.assignment07
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import androidx.navigation.fragment.findNavController
+import com.android.volley.Request
+import com.android.volley.Response
+import com.android.volley.toolbox.StringRequest
+import com.android.volley.toolbox.Volley
+import com.beust.klaxon.Json
+import com.beust.klaxon.Klaxon
 import com.example.assignment07.databinding.FragmentSecondBinding
 import com.example.assignment07.databinding.StockCellLayoutBinding
 
@@ -18,6 +25,7 @@ class SecondFragment : Fragment() {
 
     private var _binding: FragmentSecondBinding? = null
 
+    /*
     val items = mutableListOf(
         Stock("Apple", "AAPL", 115.69),
         Stock("Microsoft", "MSFT", 214.36),
@@ -30,6 +38,7 @@ class SecondFragment : Fragment() {
         Stock("Snapchat", "SNAP", 28.11),
         Stock("testlongstringabcdefghijklmnopqrstuvwxyz", "SNAP", 28.11)
     )
+    */
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -49,7 +58,42 @@ class SecondFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
 
-        binding.listStockView.adapter = StockAdapter(items, requireContext())
+        //binding.listStockView.adapter = StockAdapter(items, requireContext())
+
+
+        //create a request queue
+        val requestQueue = Volley.newRequestQueue(requireContext())
+        //define a request.
+
+        val ENDPOINT = "https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=IBM&apikey=B6BHJ8VQ01NS13RC"
+
+        val request = StringRequest(
+            Request.Method.GET, ENDPOINT,
+            Response.Listener<String> { response ->
+                val stockBase = Klaxon().parse<StockKlaxonBase>(response)
+                Log.i("ibm", stockBase!!.globalQuote!!.symbol)
+
+                val items = mutableListOf(
+                    stockBase!!.globalQuote,
+                    Stock("AAPL", "115.69"),
+                    Stock("MSFT", "214.36"),
+                    Stock("GOOGL", "1519.45"),
+                    Stock("CRM", "255.52"),
+                    Stock("FB", "260.02")
+                )
+
+                val adapter = StockAdapter(items, requireContext());
+
+                binding.listStockView.adapter = adapter
+
+            },
+
+            Response.ErrorListener {
+        //use the porvided VolleyError to display
+        //an error message
+            })
+        //add the call to the request queue
+        requestQueue.add(request)
 
 
         binding.buttonSecond.setOnClickListener {
@@ -99,16 +143,29 @@ class StockAdapter(var stocks: MutableList<Stock>, val context: Context) : BaseA
             _binding = bindings[view]
         }
         val stock = getItem(index) //get the data for this index
-        binding.stockName.text = stock.name
+        binding.stockName.text = (index+1).toString()
         binding.stockSymbol.text = stock.symbol
-        binding.stockValue.text = stock.value.toString()
+        binding.stockValue.text = stock.value
         return view
     }
 }
-
+/*
 class Stock(
     var name: String, var symbol: String, var value:
     Double
 ) {
 
-}
+}*/
+
+class Stock(
+    @Json(name = "01. symbol")
+    var symbol: String,
+    @Json(name = "05. price")
+    var value: String
+
+) {}
+
+class StockKlaxonBase(
+    @Json(name = "Global Quote")
+    val globalQuote : Stock
+    )
