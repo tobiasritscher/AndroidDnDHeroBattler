@@ -25,12 +25,14 @@ import androidx.lifecycle.Observer
 /**
  * A simple [Fragment] subclass as the second destination in the navigation.
  */
-class SecondFragment(model: SecondFragmentModel) : Fragment() {
+class SecondFragment : Fragment() {
 
     private var _binding: FragmentSecondBinding? = null
 
-    private val settings = context?.getSharedPreferences("stockFile",
-        Context.MODE_PRIVATE)
+    private val settings = context?.getSharedPreferences(
+        "stockFile",
+        Context.MODE_PRIVATE
+    )
     private val editor = settings?.edit()
 
 
@@ -55,11 +57,30 @@ class SecondFragment(model: SecondFragmentModel) : Fragment() {
         val adapter = StockAdapter(mutableListOf<Stock>(), requireContext());
         binding.listStockView.adapter = adapter
 
-        model.items.observe(viewLifecycleOwner, Observer<MutableList<Stock>>{
+        if (editor != null) {
+            model.initStock(editor)
+        }
+
+        model.items.observe(viewLifecycleOwner, Observer<MutableList<Stock>> {
             adapter.stocks.clear()
             adapter.stocks.addAll(it)
         })
 
+        binding.buttonAdd.setOnClickListener {
+            val symbol: String = binding.addSymbolName.text.toString()
+            val value: String = binding.addSymbolValue.text.toString()
+
+            if (editor != null && settings != null) {
+                model.saveStock(editor, symbol, value)
+                model.loadStock(settings)
+            }
+        }
+
+        binding.buttonClear.setOnClickListener {
+            binding.addSymbolName.text.clear()
+            binding.addSymbolValue.text.clear()
+
+        }
 
         binding.buttonSecond.setOnClickListener {
             findNavController().navigate(R.id.action_SecondFragment_to_FirstFragment)
@@ -72,20 +93,9 @@ class SecondFragment(model: SecondFragmentModel) : Fragment() {
         _binding = null
     }
 
-    fun onSharedPreferenceChanged(sharedPreferences: SharedPreferences, key: String) {
-
-        val savedStockItems: Map<String, String> = settings?.all as Map<String, String>
-
-
-        val savedItems = mutableListOf<Stock>()
-
-        savedStockItems.forEach{
-            savedItems.add(Stock(it.key, it.value))
-        }
-
-        binding.listStockView.adapter = StockAdapter(savedItems, requireContext());
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
     }
-
 }
 
 class StockAdapter(var stocks: MutableList<Stock>, val context: Context) : BaseAdapter() {
@@ -124,7 +134,7 @@ class StockAdapter(var stocks: MutableList<Stock>, val context: Context) : BaseA
             _binding = bindings[view]
         }
         val stock = getItem(index) //get the data for this index
-        binding.stockName.text = (index+1).toString()
+        binding.stockName.text = (index + 1).toString()
         binding.stockSymbol.text = stock.symbol
         binding.stockValue.text = stock.value
         return view
@@ -142,5 +152,5 @@ class Stock(
 
 class StockKlaxonBase(
     @Json(name = "Global Quote")
-    val globalQuote : Stock
-    )
+    val globalQuote: Stock
+)

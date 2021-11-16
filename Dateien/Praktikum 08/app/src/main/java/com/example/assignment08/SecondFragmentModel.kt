@@ -1,6 +1,7 @@
 package com.example.assignment08
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.util.Log
 import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.lifecycle.MutableLiveData
@@ -15,53 +16,43 @@ class SecondFragmentModel(): ViewModel() {
     var items = MutableLiveData<MutableList<Stock>>();
 
 
+
     init {
+        //
+    }
+
+    fun initStock(editor: SharedPreferences.Editor) {
+
+        val items = mutableListOf(
+            Stock("AAPL", "115.69"),
+            Stock("MSFT", "214.36"),
+            Stock("GOOGL", "1519.45"),
+            Stock("CRM", "255.52"),
+            Stock("FB", "260.02")
+        )
+
+        //writes into settings localy
+        items.forEach {
+            editor?.putString(it.symbol, it.value)
+        }
+        editor.apply()
 
     }
 
-    fun loadStock(context: Context) {
-        val settings = context?.getSharedPreferences(
-            "stockFile",
-            Context.MODE_PRIVATE
-        )
-        val editor = settings?.edit()
+    fun loadStock(settings: SharedPreferences){
+        val savedStockItems: Map<String, String> = settings?.all as Map<String, String>
 
+        val savedItems = mutableListOf<Stock>()
 
-        //create a request queue
-        val requestQueue = Volley.newRequestQueue(requireContext())
-        //define a request.
+        savedStockItems.forEach{
+            savedItems.add(Stock(it.key, it.value))
+        }
 
-        val ENDPOINT =
-            "https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=IBM&apikey=B6BHJ8VQ01NS13RC"
+        items.value = savedItems
+    }
 
-        val request = StringRequest(
-            Request.Method.GET, ENDPOINT,
-            { response ->
-                val stockBase = Klaxon().parse<StockKlaxonBase>(response)
-                Log.i("ibm", stockBase!!.globalQuote!!.symbol)
-
-                val items = mutableListOf(
-                    stockBase!!.globalQuote,
-                    Stock("AAPL", "115.69"),
-                    Stock("MSFT", "214.36"),
-                    Stock("GOOGL", "1519.45"),
-                    Stock("CRM", "255.52"),
-                    Stock("FB", "260.02")
-                )
-
-                //writes into settings localy
-                items.forEach {
-                    editor?.putString(it.symbol, it.value)
-                }
-
-
-            },
-
-            {
-                //use the porvided VolleyError to display
-                //an error message
-            })
-        //add the call to the request queue
-        requestQueue.add(request)
+    fun saveStock(editor: SharedPreferences.Editor, symbol: String, value: String){
+        editor?.putString(symbol, value)
+        editor.apply()
     }
 }
