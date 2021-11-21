@@ -1,58 +1,51 @@
 package com.example.assignment08
 
 import android.content.Context
-import android.content.SharedPreferences
 import android.util.Log
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.android.volley.Request
-import com.android.volley.Response
-import com.android.volley.toolbox.StringRequest
-import com.android.volley.toolbox.Volley
-import com.beust.klaxon.Klaxon
 
 class SecondFragmentModel(): ViewModel() {
-    var items = MutableLiveData<MutableList<Stock>>();
+    var stocks = MutableLiveData<MutableList<Stock>>()
 
-
+    val fileName: String = "testfile1"
 
     init {
-        //
+        stocks.value = mutableListOf<Stock>()
     }
 
-    fun initStock(editor: SharedPreferences.Editor) {
-
-        val items = mutableListOf(
-            Stock("AAPL", "115.69"),
-            Stock("MSFT", "214.36"),
-            Stock("GOOGL", "1519.45"),
-            Stock("CRM", "255.52"),
-            Stock("FB", "260.02")
-        )
-
-        //writes into settings localy
-        items.forEach {
-            editor?.putString(it.symbol, it.value)
+    fun initStockList(items: MutableList<Stock>, context: Context){
+        val settings = context.getSharedPreferences(fileName, Context.MODE_PRIVATE)
+        val editor = settings.edit()
+        items.forEach{
+            editor.putString(it.symbol,it.value)
+            editor.commit()
         }
-        editor.apply()
-
     }
 
-    fun loadStock(settings: SharedPreferences){
-        val savedStockItems: Map<String, String> = settings?.all as Map<String, String>
+    fun addStock(symbol: String, value: String, context: Context) {
+        stocks.value!!.add(Stock(symbol, value))
+        stocks.postValue(stocks.value!!.toMutableList())
+        val settings = context.getSharedPreferences(fileName, Context.MODE_PRIVATE)
+        val editor = settings.edit()
+        editor.putString(symbol, value.toString())
+        editor.commit()
+    }
 
-        val savedItems = mutableListOf<Stock>()
+    fun loadStock(context:Context) {
+        val settings = context?.getSharedPreferences(fileName, Context.MODE_PRIVATE)
 
-        savedStockItems.forEach{
-            savedItems.add(Stock(it.key, it.value))
+
+        //it is important that you get an editor reference!
+        val editor = settings?.edit()
+        val allEntries: Map<String, *> = settings?.getAll() as Map<String, *>
+        Log.e("where is my key: ", allEntries.toString())
+        for ((key, value) in allEntries) {
+            Log.e("where is my key: ", key)
+            stocks.value!!.add(Stock(key, value.toString()))
+            stocks.postValue(stocks.value!!.toMutableList())
         }
 
-        items.value = savedItems
-    }
-
-    fun saveStock(editor: SharedPreferences.Editor, symbol: String, value: String){
-        editor?.putString(symbol, value)
-        editor.apply()
+        stocks.value = mutableListOf<Stock>()
     }
 }

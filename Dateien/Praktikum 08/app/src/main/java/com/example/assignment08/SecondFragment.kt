@@ -9,15 +9,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import androidx.navigation.fragment.findNavController
-import com.android.volley.Request
-import com.android.volley.Response
-import com.android.volley.toolbox.StringRequest
-import com.android.volley.toolbox.Volley
 import com.beust.klaxon.Json
-import com.beust.klaxon.Klaxon
 import com.example.assignment08.databinding.FragmentSecondBinding
 import com.example.assignment08.databinding.StockCellLayoutBinding
-import android.content.SharedPreferences
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 
@@ -29,11 +23,13 @@ class SecondFragment : Fragment() {
 
     private var _binding: FragmentSecondBinding? = null
 
-    private val settings = context?.getSharedPreferences(
-        "stockFile",
-        Context.MODE_PRIVATE
+    val items = mutableListOf(
+        Stock("AAPL", "115.69"),
+        Stock("MSFT", "214.36"),
+        Stock("GOOGL", "1519.45"),
+        Stock("CRM", "255.52"),
+        Stock("FB", "260.02")
     )
-    private val editor = settings?.edit()
 
 
     // This property is only valid between onCreateView and
@@ -53,28 +49,38 @@ class SecondFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
         super.onViewCreated(view, savedInstanceState)
+
         val model: SecondFragmentModel by activityViewModels()
+
         val adapter = StockAdapter(mutableListOf<Stock>(), requireContext());
-        binding.listStockView.adapter = adapter
 
-        if (editor != null) {
-            model.initStock(editor)
-        }
+        context?.let {model.initStockList(items, it)}
 
-        model.items.observe(viewLifecycleOwner, Observer<MutableList<Stock>> {
-            adapter.stocks.clear()
-            adapter.stocks.addAll(it)
-        })
+        model.stocks.observe(viewLifecycleOwner,
+            Observer<MutableList<Stock>> { newVal ->
+                adapter?.stocks.clear()
+                adapter?.stocks.addAll(newVal)
+                adapter?.notifyDataSetChanged()
+            }
+        )
+
+        context?.let { model.loadStock(it) }
+
 
         binding.buttonAdd.setOnClickListener {
+            Log.i("tag", "Button clicked!")
+
             val symbol: String = binding.addSymbolName.text.toString()
             val value: String = binding.addSymbolValue.text.toString()
 
-            if (editor != null && settings != null) {
-                model.saveStock(editor, symbol, value)
-                model.loadStock(settings)
+            context?.let { it1 ->
+                model.addStock(symbol, value,
+                    it1
+                )
             }
         }
+
+        binding.listStockView.adapter = adapter
 
         binding.buttonClear.setOnClickListener {
             binding.addSymbolName.text.clear()
@@ -87,6 +93,7 @@ class SecondFragment : Fragment() {
         }
 
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
