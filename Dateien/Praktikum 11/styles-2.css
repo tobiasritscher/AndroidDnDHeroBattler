@@ -3,19 +3,41 @@
 div {
    box-sizing: border-box;
 }
+.container{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+.title {
+  margin: auto;
+  width: 60%;
+  padding: 10px;
+
+  text-align: center;
+}
+
+.playerTurn {
+  margin: auto;
+  width: 60%;
+  padding: 10px;
+
+  text-align: center;
+}
 
 .board {
   width: 84vmin;
   margin: auto;
   outline: 1px solid black;
-  float: left;
+
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
 }
 
 .board .field {
   border: 1px solid black;
   width: 12vmin;
   height: 12vmin;
-  float: left;
 }
 
 .board .field .piece {
@@ -23,7 +45,6 @@ div {
   height: 10vmin;
   border-radius: 50%;
   margin: 1vmin;
-  float: top;
 }
 .board .field .blue {
   background-color: blue;
