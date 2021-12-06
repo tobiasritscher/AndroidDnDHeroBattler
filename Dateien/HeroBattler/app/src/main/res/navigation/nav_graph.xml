@@ -48,6 +48,9 @@
         <action
             android:id="@+id/action_characters_to_mainMenu"
             app:destination="@id/mainMenu" />
+        <action
+            android:id="@+id/action_characters_to_newCharacter"
+            app:destination="@id/newCharacter" />
     </fragment>
     <fragment
         android:id="@+id/howToPlay"
@@ -66,5 +69,14 @@
         <action
             android:id="@+id/action_settings_to_mainMenu"
             app:destination="@id/mainMenu" />
+    </fragment>
+    <fragment
+        android:id="@+id/newCharacter"
+        android:name="com.example.herobattler.NewCharacter"
+        android:label="fragment_new_character"
+        tools:layout="@layout/fragment_new_character" >
+        <action
+            android:id="@+id/action_newCharacter_to_characters"
+            app:destination="@id/characters" />
     </fragment>
 </navigation>

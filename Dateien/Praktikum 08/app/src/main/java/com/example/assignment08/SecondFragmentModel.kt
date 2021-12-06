@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModel
 class SecondFragmentModel(): ViewModel() {
     var stocks = MutableLiveData<MutableList<Stock>>()
 
-    val fileName: String = "testfile1"
+    val fileName: String = "testfile1   "
 
     init {
         stocks.value = mutableListOf<Stock>()

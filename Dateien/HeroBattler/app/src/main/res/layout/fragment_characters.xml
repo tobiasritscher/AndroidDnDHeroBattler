@@ -8,10 +8,11 @@
 
     <TextView
         android:id="@+id/textview_play"
-        android:text="Characters"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@id/button_return_characters"
+        android:layout_marginTop="36dp"
+        android:text="Characters"
+        app:layout_constraintBottom_toTopOf="@+id/listCharacterView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -24,5 +25,26 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/textview_play" />
+        app:layout_constraintTop_toBottomOf="@+id/button_add_char"
+        app:layout_constraintVertical_bias="0.142" />
+
+    <ListView
+        android:id="@+id/listCharacterView"
+        android:layout_width="399dp"
+        android:layout_height="351dp"
+        android:layout_marginBottom="316dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/button_add_char"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="200dp"
+        android:text="Add new Character"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/listCharacterView" />
 </androidx.constraintlayout.widget.ConstraintLayout>
