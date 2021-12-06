@@ -6,14 +6,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
-import com.example.herobattler.databinding.FragmentFirstBinding
+import com.example.herobattler.databinding.FragmentMainMenuBinding
 
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
  */
 class MainMenu : Fragment() {
 
-    private var _binding: FragmentFirstBinding? = null
+    private var _binding: FragmentMainMenuBinding? = null
 
     // This property is only valid between onCreateView and
     // onDestroyView.
@@ -24,7 +24,7 @@ class MainMenu : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
 
-        _binding = FragmentFirstBinding.inflate(inflater, container, false)
+        _binding = FragmentMainMenuBinding.inflate(inflater, container, false)
         return binding.root
 
     }
@@ -32,8 +32,20 @@ class MainMenu : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.buttonFirst.setOnClickListener {
-            findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
+        binding.buttonPlay.setOnClickListener {
+            findNavController().navigate(R.id.action_mainMenu_to_play)
+        }
+
+        binding.buttonCharacters.setOnClickListener {
+            findNavController().navigate(R.id.action_mainMenu_to_characters)
+        }
+
+        binding.buttonHowToPlay.setOnClickListener {
+            findNavController().navigate(R.id.action_mainMenu_to_howToPlay)
+        }
+
+        binding.buttonSettings.setOnClickListener {
+            findNavController().navigate(R.id.action_mainMenu_to_settings)
         }
     }
 

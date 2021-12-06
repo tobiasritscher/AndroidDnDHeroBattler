@@ -6,11 +6,24 @@ xmlns:tools="http://schemas.android.com/tools"
 android:layout_width="match_parent"
 android:layout_height="match_parent"
 tools:context=".HowToPlay">
-<TextView
-    android:id="@+id/a_textview"
-    android:text="XXX"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    app:layout_constraintTop_toTopOf="parent"
-    app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/textview_how_to_play"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="How to Play"
+        app:layout_constraintBottom_toTopOf="@id/button_return_how"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/button_return_how"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Return to Menu"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textview_how_to_play" />
 </androidx.constraintlayout.widget.ConstraintLayout>
