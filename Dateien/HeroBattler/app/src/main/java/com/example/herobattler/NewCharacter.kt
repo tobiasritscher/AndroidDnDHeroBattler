@@ -1,10 +1,13 @@
 package com.example.herobattler
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.activityViewModels
+import androidx.navigation.fragment.findNavController
 import com.example.herobattler.databinding.FragmentHowToPlayBinding
 import com.example.herobattler.databinding.FragmentNewCharacterBinding
 
@@ -26,4 +29,43 @@ class NewCharacter : Fragment() {
         return binding.root
     }
 
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val model: CharactersModel by activityViewModels()
+
+        binding.buttonAddCharacter.setOnClickListener {
+            Log.i("tag", "Button clicked!")
+
+            val name: String = binding.newCharacterName.text.toString()
+            val level: String = binding.newCharacterLevel.text.toString()
+            val cclass: String = binding.newCharacterClass.text.toString()
+            val race: String = binding.newCharacterRace.text.toString()
+            val hp: String = binding.newCharacterHP.text.toString()
+
+
+            context?.let { it1 ->
+                model.addCharacter(name, level, cclass, race, hp,
+                    it1
+                )
+            }
+
+            //findNavController().navigate(R.id.action_newCharacter_to_characters)
+        }
+
+
+        binding.buttonClear.setOnClickListener {
+            binding.newCharacterName.text.clear()
+            binding.newCharacterLevel.text.clear()
+            binding.newCharacterClass.text.clear()
+            binding.newCharacterRace.text.clear()
+            binding.newCharacterHP.text.clear()
+        }
+
+
+        binding.buttonReturnNew.setOnClickListener {
+            findNavController().navigate(R.id.action_newCharacter_to_characters)
+        }
+    }
 }

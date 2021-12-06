@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModel
 class CharactersModel : ViewModel() {
     var characters = MutableLiveData<MutableList<Character>>()
 
-    val fileName: String = "characterSave1"
+    val fileName: String = "characterSave2"
     val seperator: String = ";"
 
     init {
@@ -29,7 +29,7 @@ class CharactersModel : ViewModel() {
         characters.postValue(characters.value!!.toMutableList())
         val settings = context.getSharedPreferences(fileName, Context.MODE_PRIVATE)
         val editor = settings.edit()
-        editor.putString(name, level + cclass + race + hp)
+        editor.putString(name, level+seperator + cclass+seperator + race+seperator + hp)
         editor.commit()
     }
 
