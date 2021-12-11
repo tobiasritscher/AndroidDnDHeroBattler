@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Adapter
 import android.widget.BaseAdapter
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -49,9 +50,15 @@ class Characters : Fragment() {
 
         val model: CharactersModel by activityViewModels()
 
+        //val adapter = CharactersAdapter(mutableListOf<Character>(), requireContext());
+        CharactersAdapter.setMyAdapter(CharactersAdapter(mutableListOf<Character>(), requireContext()))
+        //val adapter = CharactersAdapter.getMyAdapter()
         val adapter = CharactersAdapter(mutableListOf<Character>(), requireContext());
 
-        context?.let {model.initCharacterList(baseCharacters, it)}
+
+        if(adapter?.characters.size == 0){
+            context?.let {model.initCharacterList(baseCharacters, it)}
+        }
 
         model.characters.observe(viewLifecycleOwner,
             Observer<MutableList<Character>> { newVal ->
@@ -90,6 +97,20 @@ class CharactersAdapter(var characters: MutableList<Character>, val context: Con
 
     init {
         layoutInflater = LayoutInflater.from(context)
+    }
+
+    companion object CharAdapter{
+        lateinit var adapter: Adapter
+
+        @JvmName("setAdapter1")
+        fun setMyAdapter(adapter: Adapter) {
+            this.adapter = adapter
+        }
+
+        @JvmName("getAdapter1")
+        fun getMyAdapter(): Adapter{
+            return adapter
+        }
     }
 
     override

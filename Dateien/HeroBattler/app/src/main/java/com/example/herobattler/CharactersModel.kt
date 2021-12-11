@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModel
 class CharactersModel : ViewModel() {
     var characters = MutableLiveData<MutableList<Character>>()
 
-    val fileName: String = "characterSave2"
+    val fileName: String = "characterSave7"
     val seperator: String = ";"
 
     init {
@@ -25,8 +25,8 @@ class CharactersModel : ViewModel() {
     }
 
     fun addCharacter(name: String, level: String, race: String, cclass: String, hp: String, context: Context) {
-        characters.value!!.add(Character(name, level, race, cclass, hp))
-        characters.postValue(characters.value!!.toMutableList())
+        //characters.value!!.add(Character(name, level, race, cclass, hp))
+        //characters.postValue(characters.value!!.toMutableList())
         val settings = context.getSharedPreferences(fileName, Context.MODE_PRIVATE)
         val editor = settings.edit()
         editor.putString(name, level+seperator + cclass+seperator + race+seperator + hp)
@@ -44,30 +44,21 @@ class CharactersModel : ViewModel() {
         for ((key, value) in allEntries) {
             Log.e("where is my key: ", key)
 
-            characters.value!!.add(Character(key, parseLevel(value.toString()), parseClass(value.toString()), parseRace(value.toString()), parseHP(value.toString())))
+            characters.value!!.add(Character(
+                key,
+                parseLevel(value.toString())[0].trim(),
+                parseLevel(value.toString())[1].trim(),
+                parseLevel(value.toString())[2].trim(),
+                parseLevel(value.toString())[3].trim()
+            ))
             characters.postValue(characters.value!!.toMutableList())
         }
 
         characters.value = mutableListOf<Character>()
     }
 
-    fun parseLevel(value: String): String {
+    fun parseLevel(value: String): List<String> {
         val separated: List<String> = value.split(seperator)
-        return separated[0].trim()
-    }
-
-    fun parseClass(value: String): String {
-        val separated: List<String> = value.split(seperator)
-        return separated[1].trim()
-    }
-
-    fun parseRace(value: String): String {
-        val separated: List<String> = value.split(seperator)
-        return separated[2].trim()
-    }
-
-    fun parseHP(value: String): String {
-        val separated: List<String> = value.split(seperator)
-        return separated[3].trim()
+        return separated
     }
 }
