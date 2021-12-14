@@ -23,11 +23,11 @@ class Characters : Fragment() {
     private var _binding: FragmentCharactersBinding? = null
 
     val baseCharacters = mutableListOf(
-        Character("Logathius", "5", "Paladin", "Human", "45"),
-        Character("Alune", "4", "Ranger", "Elve", "24"),
-        Character("Orc1", "3", "Orc-Swordman", "Orc", "38"),
-        Character("Orc2", "3", "Orc-Bowman", "Orc", "30"),
-        Character("Orc3", "3", "Orc-Spearman", "Orc", "32"),
+        Character("Logathius", "5", "Paladin", "Human", "45", "45"),
+        Character("Alune", "4", "Ranger", "Elve", "24", "24"),
+        Character("Orc1", "3", "Orc-Swordman", "Orc", "38", "38"),
+        Character("Orc2", "3", "Orc-Bowman", "Orc", "30", "30"),
+        Character("Orc3", "3", "Orc-Spearman", "Orc", "32", "32"),
     )
 
 
@@ -51,7 +51,7 @@ class Characters : Fragment() {
         val model: CharactersModel by activityViewModels()
 
         //val adapter = CharactersAdapter(mutableListOf<Character>(), requireContext());
-        CharactersAdapter.setMyAdapter(CharactersAdapter(mutableListOf<Character>(), requireContext()))
+        //CharactersAdapter.setMyAdapter(CharactersAdapter(mutableListOf<Character>(), requireContext()))
         //val adapter = CharactersAdapter.getMyAdapter()
         val adapter = CharactersAdapter(mutableListOf<Character>(), requireContext());
 
@@ -78,8 +78,8 @@ class Characters : Fragment() {
             findNavController().navigate(R.id.action_characters_to_newCharacter)
         }
 
-        binding.buttonReturnCharacters.setOnClickListener {
-            findNavController().navigate(R.id.action_characters_to_mainMenu)
+        binding.buttonDeleteChar.setOnClickListener {
+            findNavController().navigate(R.id.action_characters_to_deleteCharacter)
         }
     }
 
@@ -97,20 +97,6 @@ class CharactersAdapter(var characters: MutableList<Character>, val context: Con
 
     init {
         layoutInflater = LayoutInflater.from(context)
-    }
-
-    companion object CharAdapter{
-        lateinit var adapter: Adapter
-
-        @JvmName("setAdapter1")
-        fun setMyAdapter(adapter: Adapter) {
-            this.adapter = adapter
-        }
-
-        @JvmName("getAdapter1")
-        fun getMyAdapter(): Adapter{
-            return adapter
-        }
     }
 
     override
@@ -144,7 +130,7 @@ class CharactersAdapter(var characters: MutableList<Character>, val context: Con
         binding.characterLevel.text = character.characterLevel
         binding.characterClass.text = character.characterClass
         binding.characterRace.text = character.characterRace
-        binding.characterHP.text = character.characterHP
+        binding.characterHP.text = character.characterHP + " (" + character.characterMaxHP + ")"
         return view
     }
 
@@ -155,5 +141,6 @@ class Character(
     var characterLevel: String,
     var characterClass: String,
     var characterRace: String,
-    var characterHP: String
+    var characterHP: String,
+    var characterMaxHP: String
 ) {}

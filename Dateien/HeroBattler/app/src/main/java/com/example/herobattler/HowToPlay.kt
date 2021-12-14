@@ -32,9 +32,5 @@ class HowToPlay : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        binding.buttonReturnHow.setOnClickListener {
-            findNavController().navigate(R.id.action_howToPlay_to_mainMenu)
-        }
     }
 }

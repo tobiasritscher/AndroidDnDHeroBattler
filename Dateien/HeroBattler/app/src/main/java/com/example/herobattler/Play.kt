@@ -5,28 +5,23 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.navigation.fragment.findNavController
-import com.example.herobattler.databinding.FragmentHowToPlayBinding
+
 import com.example.herobattler.databinding.FragmentPlayBinding
+import android.content.pm.ActivityInfo
+
+
+import android.text.Editable
+import android.text.TextWatcher
+import androidx.fragment.app.activityViewModels
 
 
 class Play : Fragment() {
     private var _binding: FragmentPlayBinding? = null
 
-    val baseCharacters = mutableListOf(
-        Character("Logathius", "5", "Paladin", "Human", "45"),
-        Character("Alune", "4", "Ranger", "Elve", "24"),
-        Character("Orc1", "3", "Orc-Swordman", "Orc", "38"),
-        Character("Orc2", "3", "Orc-Bowman", "Orc", "30"),
-        Character("Orc3", "3", "Orc-Spearman", "Orc", "32"),
-    )
-
     private val binding get() = _binding!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-
     }
 
     override fun onCreateView(
@@ -40,8 +35,116 @@ class Play : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.buttonReturnPlay.setOnClickListener {
-            findNavController().navigate(R.id.action_play_to_mainMenu)
+        activity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+
+        val model: CharactersModel by activityViewModels()
+        context?.let { model.loadCharacter(it) }
+        val baseCharacters = model.getMutableListOfCharacters()
+
+        binding.choosePlayer1.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+
+                loadCharacter1(binding.choosePlayer1.text.toString(), baseCharacters)
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            }
+        })
+
+        binding.choosePlayer2.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+
+                loadCharacter2(binding.choosePlayer2.text.toString(), baseCharacters)
+            }
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+            }
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+            }
+        })
+
+
+        binding.attackButton.setOnClickListener {
+            val character = baseCharacters.find { it.characterName == binding.player2Name.text  }
+            if (character != null && binding.damageToHP.text.toString() != null) {
+
+                var hpValue =
+                    character.characterHP.toInt() - binding.damageToHP.text.toString().toInt()
+
+                if(hpValue <= 0)
+                {
+                    hpValue = 0
+                }
+                character.characterHP = hpValue.toString()
+
+
+                loadCharacter2(character.characterName, baseCharacters)
+                saveIntoFile(model, character)
+            }
+        }
+
+        binding.healButton.setOnClickListener {
+            val character = baseCharacters.find { it.characterName == binding.player2Name.text  }
+            if (character != null && binding.damageToHP.text.toString() != null) {
+
+                var hpValue =
+                    character.characterHP.toInt() + binding.damageToHP.text.toString().toInt()
+
+                if(hpValue >= character.characterMaxHP.toInt())
+                {
+                    hpValue = character.characterMaxHP.toInt()
+                }
+                character.characterHP = hpValue.toString()
+
+
+                loadCharacter2(character.characterName, baseCharacters)
+                saveIntoFile(model, character)
+            }
+        }
+    }
+
+    fun saveIntoFile(model: CharactersModel, character: Character) {
+
+        context?.let {
+            model.deleteCharacter(
+                character.characterName, it)
+        }
+
+        context?.let {
+            model.addCharacter(
+                character.characterName,
+                character.characterLevel,
+                character.characterClass,
+                character.characterRace,
+                character.characterHP,
+                character.characterMaxHP, it)
+        }
+    }
+
+    private fun loadCharacter1(choice: String, baseCharacters: MutableList<Character>){
+        for( char in baseCharacters){
+            if((char.characterName) == choice){
+                binding.player1Name.text = char.characterName
+                binding.player1Level.text = char.characterLevel
+                binding.player1Class.text = char.characterClass
+                binding.player1Race.text = char.characterRace
+                binding.player1HP.text = char.characterHP + " (" + char.characterMaxHP + ")"
+            }
+        }
+    }
+    private fun loadCharacter2(choice: String, baseCharacters: MutableList<Character>){
+        for( char in baseCharacters){
+            if((char.characterName) == choice){
+                binding.player2Name.text = char.characterName
+                binding.player2Level.text = char.characterLevel
+                binding.player2Class.text = char.characterClass
+                binding.player2Race.text = char.characterRace
+                binding.player2HP.text = char.characterHP + " (" + char.characterMaxHP + ")"
+            }
         }
     }
 }

@@ -43,17 +43,13 @@ class NewCharacter : Fragment() {
             val cclass: String = binding.newCharacterClass.text.toString()
             val race: String = binding.newCharacterRace.text.toString()
             val hp: String = binding.newCharacterHP.text.toString()
+            val maxHp: String = binding.newCharacterMaxHP.text.toString()
 
 
-            context?.let { it1 ->
-                model.addCharacter(name, level, cclass, race, hp,
-                    it1
-                )
+            context?.let {it1 ->
+                model.addCharacter(name, level, cclass, race, hp, maxHp, it1)
             }
-
-            //findNavController().navigate(R.id.action_newCharacter_to_characters)
         }
-
 
         binding.buttonClear.setOnClickListener {
             binding.newCharacterName.text.clear()
@@ -61,11 +57,7 @@ class NewCharacter : Fragment() {
             binding.newCharacterClass.text.clear()
             binding.newCharacterRace.text.clear()
             binding.newCharacterHP.text.clear()
-        }
-
-
-        binding.buttonReturnNew.setOnClickListener {
-            findNavController().navigate(R.id.action_newCharacter_to_characters)
+            binding.newCharacterMaxHP.text.clear()
         }
     }
 }
