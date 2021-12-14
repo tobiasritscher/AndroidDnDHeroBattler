@@ -12,6 +12,15 @@ import com.example.herobattler.databinding.FragmentPlayBinding
 
 class Play : Fragment() {
     private var _binding: FragmentPlayBinding? = null
+
+    val baseCharacters = mutableListOf(
+        Character("Logathius", "5", "Paladin", "Human", "45"),
+        Character("Alune", "4", "Ranger", "Elve", "24"),
+        Character("Orc1", "3", "Orc-Swordman", "Orc", "38"),
+        Character("Orc2", "3", "Orc-Bowman", "Orc", "30"),
+        Character("Orc3", "3", "Orc-Spearman", "Orc", "32"),
+    )
+
     private val binding get() = _binding!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
